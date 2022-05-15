@@ -1,28 +1,12 @@
-import { htmlPrefilter, type } from "jquery";
-import APICall from "./APICall"
+import APICall from "./APICall";
+import ProductStructure from "./IProductStructure";
 
 export default class Render {
+  renderProducts(products: ProductStructure[]) {
+    var prodWrap = document.getElementById("products-wrapper");
 
-    renderProducts() {
-        var prodWrap = document.getElementById("products-wrapper");
-
-
-        const call = new APICall();
-
-        // call api and get products
-        var products = call.getProducts();
-
-        console.log(products);
-
-        setTimeout(() => {
-
-
-
-            products.forEach((product) => {
-                console.log(products);
-
-
-                var productTemplate = `
+    products.forEach((product) => {
+      var productTemplate = `
                 <div class="col-md-3 g-4">
                     <div class="card h-100 product">
                         <img src="${product.img_url}" class="card-img-top product-img p-3 border-bottom" alt="${product.title}">
@@ -39,17 +23,7 @@ export default class Render {
                     </div>
                 </div>`;
 
-                prodWrap.insertAdjacentHTML('beforeend', productTemplate)
-            })
-
-
-
-
-        }, 100);
-
-
-
-
-    }
-
+      prodWrap.insertAdjacentHTML("beforeend", productTemplate);
+    });
+  }
 }

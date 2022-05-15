@@ -1,11 +1,16 @@
-import "./css/style.css"
+import "./css/style.css";
 import Render from "./Render";
+import APICall from "./APICall";
+import ProductStructure from "./IProductStructure";
 
-class main {
-    constructor() {
-        const r = new Render();
-        r.renderProducts();
-    }
-}
+document.addEventListener("DOMContentLoaded", () => {
+  new APICall().getProducts().then((response: any) => {
+    let products: ProductStructure[] = [];
+    response.data.products.forEach((product: any) => {
+      products.push(product);
+    });
 
-new main();
+    const r = new Render();
+    r.renderProducts(products);
+  });
+});
