@@ -1,4 +1,13 @@
-.cartQuantityWrap,
-.emptyCartMessage {
+.cartQuantityWrap {
   display: none;
+}
+
+a.add-to-cart {
+  position: absolute;
+  bottom: 10px;
+}
+
+.card-body {
+  position: relative;
+  padding-bottom: 50px;
 }
