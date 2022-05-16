@@ -1,16 +1,41 @@
 import "./css/style.css";
-import Render from "./Render";
+import ProductService from "./ProductService";
 import APICall from "./APICall";
 import ProductStructure from "./IProductStructure";
+import Cart from "./Cart";
 
 document.addEventListener("DOMContentLoaded", () => {
-  new APICall().getProducts().then((response: any) => {
-    let products: ProductStructure[] = [];
-    response.data.products.forEach((product: any) => {
-      products.push(product);
-    });
+    new APICall().getProducts().then((response: any) => {
+        let products: ProductStructure[] = [];
 
-    const r = new Render();
-    r.renderProducts(products);
-  });
+        response.data.products.forEach((product: any) => {
+            products.push(product);
+        });
+
+        const prodService = new ProductService();
+        const c = new Cart();
+
+        prodService.showProducts(products);
+        prodService.showCount(products);
+
+        var prodInterval = setInterval(() => {
+            var buttons = document.getElementsByClassName("add-to-cart") as HTMLCollection
+            if (buttons.length == products.length) {
+                c.addListeners(buttons);
+                clearInterval(prodInterval)
+            }
+
+
+        }, 200);
+
+
+        var cartQuantity = c.items;
+        var cartQuantityInterval = setTimeout(() => {
+            if (cartQuantity.length > 0) {
+                c.showCartQuantity();
+                clearTimeout(cartQuantityInterval);
+            }
+        }, 200);
+
+    });
 });

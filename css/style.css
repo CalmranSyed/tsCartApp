@@ -1,10 +1,10 @@
-.cartQuantityWrap {
-  display: none;
+.cartQuantity {
+  /* display: none; */
 }
 
 a.add-to-cart {
   position: absolute;
-  bottom: 10px;
+  bottom: 15px;
 }
 
 .card-body {

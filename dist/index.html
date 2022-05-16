@@ -18,11 +18,11 @@
             <div class="container">
                 <a class="navbar-brand fw-bold">CartApp</a>
                 <div>
-                    <button class="btn btn-outline-light position-relative" type="button" data-bs-toggle="offcanvas"
-                        data-bs-target="#cart" aria-controls="cart">Cart <i class="bi bi-cart"></i>
+                    <button class="btn btn-outline-light position-relative show-cart" type="button"
+                        data-bs-toggle="offcanvas" data-bs-target="#cart" aria-controls="cart">Cart <i
+                            class="bi bi-cart"></i>
                         <span
-                            class="cartQuantityWrap position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
-                            <span class="cartQuantity"></span>
+                            class="cartQuantity position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
                         </span>
                     </button>
                 </div>
@@ -43,11 +43,15 @@
             </div>
         </nav>
     </header>
+
     <main class="py-5">
         <div class="container">
             <h3 class="text-underline mb-5">Products</h3>
             <div id="products-wrapper" class="row">
-                <p>Total Products :</p>
+                <p>
+                    <span>Total Products :</span>
+                    <span id="total-products" class="fw-bold"></span>
+                </p>
             </div>
         </div>
 
