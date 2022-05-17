@@ -1,5 +1,21 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 .cartQuantity {
-  /* display: none; */
+  color: #fff;
+  display: none;
+  padding: 0;
+  font-size: 14px;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+}
+
+.show-cart:hover .cartQuantity {
+  color: #fff;
 }
 
 a.add-to-cart {

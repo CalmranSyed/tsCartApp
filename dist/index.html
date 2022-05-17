@@ -17,15 +17,14 @@
         <nav class="navbar navbar-dark bg-dark py-3">
             <div class="container">
                 <a class="navbar-brand fw-bold">CartApp</a>
-                <div>
-                    <button class="btn btn-outline-light position-relative show-cart" type="button"
-                        data-bs-toggle="offcanvas" data-bs-target="#cart" aria-controls="cart">Cart <i
-                            class="bi bi-cart"></i>
-                        <span
-                            class="cartQuantity position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
-                        </span>
-                    </button>
-                </div>
+
+                <button class="btn btn-outline-light position-relative show-cart" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#cart" aria-controls="cart">Cart <i
+                        class="bi bi-cart"></i>
+                    <span
+                        class="cartQuantity position-absolute top-0 start-100 translate-middle bg-danger border border-light rounded-circle">
+                    </span>
+                </button>
 
                 <div class="offcanvas offcanvas-end" tabindex="-1" id="cart" aria-labelledby="cartLabel">
                     <div class="offcanvas-header">
@@ -34,7 +33,7 @@
                             aria-label="Close"></button>
                     </div>
                     <div class="cartBody offcanvas-body">
-                        <div class="emptyCartMessage text-center    py-5">
+                        <div id="emptyCartMessage" class="text-center py-5">
                             <span><i class="bi bi-cart-dash fs-1"></i></span>
                             <p class="text-center fs-4">There are no items in the cart. Shop for some items !</p>
                         </div>

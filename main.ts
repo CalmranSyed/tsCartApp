@@ -19,23 +19,19 @@ document.addEventListener("DOMContentLoaded", () => {
         prodService.showCount(products);
 
         var prodInterval = setInterval(() => {
-            var buttons = document.getElementsByClassName("add-to-cart") as HTMLCollection
+            var buttons = document.getElementsByClassName("add-to-cart") as HTMLCollection;
+
             if (buttons.length == products.length) {
                 c.addListeners(buttons);
-                clearInterval(prodInterval)
-            }
-
-
-        }, 200);
-
-
-        var cartQuantity = c.items;
-        var cartQuantityInterval = setTimeout(() => {
-            if (cartQuantity.length > 0) {
-                c.showCartQuantity();
-                clearTimeout(cartQuantityInterval);
+                clearInterval(prodInterval);
             }
         }, 200);
+
+
+        var counterInterval = setInterval(() => {
+        }, 200)
+
+
 
     });
 });

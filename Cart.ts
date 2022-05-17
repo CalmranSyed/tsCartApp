@@ -13,6 +13,8 @@ export default class Cart implements cartListener {
             buttons[i].addEventListener("click", (e: Event) => {
                 e.preventDefault();
                 this.addItem(buttons[i].getAttribute("data-id"));
+                this.showCartQuantity();
+                this.isEmpty();
             });
         }
     }
@@ -23,12 +25,19 @@ export default class Cart implements cartListener {
     }
 
     showCartQuantity() {
-        console.log(this.cartItems);
+        var qunatityBadge = document.querySelector('.show-cart .cartQuantity') as HTMLElement;
 
         if (this.cartItems.length > 0) {
-            var qunatityBadge: HTMLElement = document.querySelector('.show-cart .cartQuantity');
             qunatityBadge.style.display = "block";
             qunatityBadge.innerHTML = (this.cartItems.length).toString();
+        }
+    }
+
+    isEmpty() {
+        var emptyCartMessage = document.getElementById('emptyCartMessage') as HTMLElement;
+
+        if (this.cartItems.length > 0) {
+            emptyCartMessage.style.display = "none";
         }
     }
 
