@@ -4,11 +4,15 @@ import APICall from "./APICall";
 import ProductStructure from "./IProductStructure";
 import Cart from "./Cart";
 
+
+export let products: ProductStructure[] = [];
+
 document.addEventListener("DOMContentLoaded", () => {
     new APICall().getProducts().then((response: any) => {
-        let products: ProductStructure[] = [];
+        // create an empty array to store products to store
 
         response.data.products.forEach((product: any) => {
+            // add products from the response to the created array
             products.push(product);
         });
 
@@ -25,13 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 c.addListeners(buttons);
                 clearInterval(prodInterval);
             }
+
         }, 200);
-
-
-        var counterInterval = setInterval(() => {
-        }, 200)
-
-
-
     });
 });
+

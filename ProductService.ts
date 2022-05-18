@@ -10,8 +10,8 @@ export default class ProductService {
     products.forEach((product) => {
       // HTML layout for product card
       var productTemplate = `
-      <div class="col-md-3 g-4">
-        <div class="card h-100 product">
+      <div class="col-md-3 g-4 product">
+        <div class="card h-100 ">
           <img src="${product.img_url}" class="card-img-top product-img p-3 border-bottom" alt="${product.title}">
         <div class="card-body">
           <h5 class="card-title product-title">${product.title}</h5>
@@ -21,7 +21,7 @@ export default class ProductService {
             <span class="discount-price fw-bold">${product.disc_price} Rs</span>
           </p>
           <p class="card-text product-description">${product.desc}</p>
-          <a href="#" data-id="${product.id}" class="btn btn-primary add-to-cart">Add To Cart</a>
+          <a href="#" class="btn btn-dark add-to-cart">Add To Cart</a>
         </div>
         </div>
       </div>`;
