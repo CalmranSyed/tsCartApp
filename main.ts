@@ -5,7 +5,7 @@ import ProductStructure from "./IProductStructure";
 import Cart from "./Cart";
 
 
-export let products: ProductStructure[] = [];
+var products: ProductStructure[] = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     new APICall().getProducts().then((response: any) => {
@@ -34,3 +34,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+export default products;

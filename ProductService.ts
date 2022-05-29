@@ -24,7 +24,8 @@ export default class ProductService {
           <a href="#" class="btn btn-dark add-to-cart">Add To Cart</a>
         </div>
         </div>
-      </div>`;
+      </div>
+      `;
 
       prodWrap.insertAdjacentHTML("beforeend", productTemplate);
     });

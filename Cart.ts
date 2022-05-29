@@ -1,11 +1,16 @@
 import CartActions from "./IcartActions";
 import cartListener from "./IcartActions";
 import ProductStructure from "./IProductStructure";
-import { products } from "./main";
-export default class Cart implements CartActions {
-    cartItems: ProductStructure[] = [];
+import products from "./main";
+import Count from "./ICount";
+import CartProduct from "./ICartProduct";
 
-    get items(): ProductStructure[] {
+export default class Cart implements CartActions {
+    cartItems: CartProduct[] = [];
+    itemCount: Count[] = [];
+    counter: number = 1;
+
+    get items(): CartProduct[] {
         return this.cartItems;
     }
 
@@ -17,12 +22,28 @@ export default class Cart implements CartActions {
                 this.checkEmpty();
             });
         }
+
     }
 
     addItem(product: ProductStructure): void {
-        this.cartItems.push(product);
-        this.showCartQuantity();
+        this.cartItems.push({ product: product, counter: 1 });
+        for (let i = 0; i < this.cartItems.length; i++) {
+            for (let j = i + 1; j < this.cartItems.length; j++) {
 
+                if (this.cartItems[j].product.id === this.cartItems[i].product.id) {
+                    this.cartItems[i].counter++;
+                    this.cartItems.pop();
+                }
+                else {
+                    console.log("No Match");
+                }
+
+            }
+
+        }
+
+        var cart = document.getElementById('cartBody');
+        var itemQuantity = document.getElementById('item-quantity');
         var cartItemTemplate = `
         <div class="product card mb-3">
             <div class="row g-0 align-items-center">
@@ -39,7 +60,7 @@ export default class Cart implements CartActions {
                         </p>
                         <p class="item-quantity-wrap">
                             <span>Quantity :</span>
-                            <span class="item-quantity"></span>
+                            <span id="item-quantity">${this.counter}</span>
                         </p>
                         <div>
                             <button class="incrementItem me-2 btn btn-outline-dark"><i class="bi bi-plus-lg"></i></button>
@@ -51,9 +72,16 @@ export default class Cart implements CartActions {
             </div>
         </div>
         `;
+        // console.log(counter);
 
-        var cart = document.getElementById('cartBody');
+
         cart.insertAdjacentHTML('beforeend', cartItemTemplate);
+
+
+        console.log(this.cartItems);
+
+        this.showCartQuantity();
+
 
     }
 
@@ -77,6 +105,10 @@ export default class Cart implements CartActions {
             emptyMessage.style.display = 'none';
 
         }
+    }
+
+    itemQuantity() {
+
     }
 
 }
