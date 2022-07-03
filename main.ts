@@ -17,7 +17,7 @@ interface CartProductStructure {
 }
 
 interface CartActions {
-    addItem(productID: string): void;
+    addToCart(cartProduct: CartProduct): void;
     // removeItem(): string;
     // incrementItem(): string;
     // decrementItem(): string;
@@ -34,11 +34,47 @@ class NetworkCall {
     }
 }
 
-// Product Service
+var products: ProductStructure[] = [];
+
+
+// Main Function
+document.addEventListener("DOMContentLoaded", () => {
+    new NetworkCall().getProducts().then((response: any) => {
+        // create an empty array to store products to store
+
+        response.data.products.forEach((product: any) => {
+            // add products from the response to the created array
+            products.push(product);
+        });
+
+        const prodService = new ProductService();
+        const c = new CartHandler();
+        const cModel = new CartModel();
+
+        prodService.showProducts(products);
+        prodService.showCount(products);
+
+        var prodInterval = setInterval(() => {
+            var buttons = document.getElementsByClassName("add-to-cart") as HTMLCollection;
+
+            if (buttons.length == products.length) {
+                cModel.addListeners(buttons);
+                clearInterval(prodInterval);
+            }
+
+        }, 200);
+
+
+    });
+});
+
+
+// Product Service (Used for rendering products and related data on)
 class ProductService {
 
     // render product by taking data from the products array
     showProducts(products: ProductStructure[]) {
+
         var prodWrap = document.getElementById("products-wrapper");
 
         products.forEach((product) => {
@@ -75,18 +111,23 @@ class ProductService {
 
 // 
 class CartModel {
+    cart: CartProduct[] = []
+
 
     addListeners(buttons: HTMLCollection) {
         for (let i = 0; i < buttons.length; i++) {
             buttons[i].addEventListener("click", (e: Event) => {
                 e.preventDefault();
-                cHandler.addItem(products[i].id);
+                // cHandler.addToCart()
+
+                cHandler.onclickAddToCart(products[i]);
                 cHandler.checkEmpty();
             });
         }
     }
 }
 
+const cModel = new CartModel();
 // CartHandler Class (Handles UI)
 class CartHandler implements CartActions {
     cartItems: CartProduct[] = [];
@@ -95,9 +136,11 @@ class CartHandler implements CartActions {
         return this.cartItems;
     }
 
+    onclickAddToCart(product: ProductStructure) {
+        cModel.cart.push(product);
+    }
 
-    addItem(productID: string): void {
-
+    addToCart(cartProduct: CartProduct): void {
 
         // check for repeated products
         // for (let i = 0; i < this.cartItems.length; i++) {
@@ -196,36 +239,7 @@ class CartProduct {
 }
 
 
-var products: ProductStructure[] = [];
 
 
-
-
-document.addEventListener("DOMContentLoaded", () => {
-    new NetworkCall().getProducts().then((response: any) => {
-        // create an empty array to store products to store
-
-        response.data.products.forEach((product: any) => {
-            // add products from the response to the created array
-            products.push(product);
-        });
-
-        const prodService = new ProductService();
-        const c = new CartHandler();
-
-        prodService.showProducts(products);
-        prodService.showCount(products);
-
-        var prodInterval = setInterval(() => {
-            var buttons = document.getElementsByClassName("add-to-cart") as HTMLCollection;
-
-            if (buttons.length == products.length) {
-                c.addListeners(buttons);
-                clearInterval(prodInterval);
-            }
-
-        }, 200);
-    });
-});
 
 
