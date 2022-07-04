@@ -137,7 +137,25 @@ class CartHandler implements CartActions {
     }
 
     onclickAddToCart(product: ProductStructure) {
-        cModel.cart.push(product);
+        var cartProduct = new CartProduct(product.id, product.title, product.disc_price, 1)
+        
+        //  When cart is empty
+        if(cModel.cart.length == 0) {
+            cModel.cart.push(cartProduct)
+            return
+        }
+
+        //  When product exists
+        cModel.cart.forEach((cp) => {
+            if (cp.id == cartProduct.id) {
+                cp.count++
+                return
+            }
+            //  New entry
+            cModel.cart.push(cartProduct)
+        })
+        
+        console.log("Cart count : ", cModel.cart)
     }
 
     addToCart(cartProduct: CartProduct): void {
