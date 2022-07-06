@@ -36,6 +36,7 @@ class NetworkCall {
 
 var products: ProductStructure[] = [];
 
+var cHandler: CartHandler
 
 // Main Function
 document.addEventListener("DOMContentLoaded", () => {
@@ -47,8 +48,10 @@ document.addEventListener("DOMContentLoaded", () => {
             products.push(product);
         });
 
+
+        const cartListener: CartListener = new ICartListener()
         const prodService = new ProductService();
-        const c = new CartHandler();
+        cHandler = new CartHandler(cartListener);
         const cModel = new CartModel();
 
         prodService.showProducts(products);
@@ -127,11 +130,31 @@ class CartModel {
     }
 }
 
+class ICartListener implements CartListener {
+    OnCartUpdate(cartProducts: CartProduct[]) {
+        console.log(cartProducts)
+        //  Render
+    }
+}
+
+interface CartListener {
+    OnCartUpdate(cartProducts: CartProduct[]):any
+}
+
 const cModel = new CartModel();
 // CartHandler Class (Handles UI)
 class CartHandler implements CartActions {
-    cartItems: CartProduct[] = [];
+    
+    private _listener: CartListener;
+    public get listener(): CartListener {
+        return this._listener;
+    }
 
+    constructor(listener: CartListener) {
+        this._listener = listener
+    }
+
+    private cartItems: CartProduct[] = [];
     get items(): CartProduct[] {
         return this.cartItems;
     }
@@ -142,18 +165,20 @@ class CartHandler implements CartActions {
         //  When cart is empty
         if(cModel.cart.length == 0) {
             cModel.cart.push(cartProduct)
+            this.listener.OnCartUpdate(cModel.cart)
             return
         }
 
-        //  When product exists
-        cModel.cart.forEach((cp) => {
+        for (var cp of cModel.cart) {
             if (cp.id == cartProduct.id) {
                 cp.count++
+                this.listener.OnCartUpdate(cModel.cart)
                 return
             }
-            //  New entry
-            cModel.cart.push(cartProduct)
-        })
+        }
+
+        cModel.cart.push(cartProduct)
+        this.listener.OnCartUpdate(cModel.cart)
         
         console.log("Cart count : ", cModel.cart)
     }
@@ -238,8 +263,6 @@ class CartHandler implements CartActions {
     }
 
 }
-
-var cHandler = new CartHandler();
 
 // Cart entity class (For conversion of added objects)
 class CartProduct {
