@@ -1,7 +1,7 @@
 import "./css/style.css";
 
 // interfaces
-interface ProductStructure {
+interface Product {
     id: string;
     title: string;
     desc: string;
@@ -9,11 +9,6 @@ interface ProductStructure {
     orig_price: number;
     disc_price: number;
     category: number;
-}
-
-interface CartProductStructure {
-    product: ProductStructure;
-    counter: number;
 }
 
 interface CartActions {
@@ -29,12 +24,12 @@ const axios = require("axios").default;
 
 
 class NetworkCall {
-    getProducts(): Promise<ProductStructure[]> {
+    getProducts(): Promise<Product[]> {
         return axios.get(apiURL)
     }
 }
 
-var products: ProductStructure[] = [];
+var products: Product[] = [];
 
 var cHandler: CartHandler
 
@@ -57,16 +52,8 @@ document.addEventListener("DOMContentLoaded", () => {
         prodService.showProducts(products);
         prodService.showCount(products);
 
-        // var prodInterval = setInterval(() => {
-        //     var buttons = document.getElementsByClassName("add-to-cart") as HTMLCollection;
-
-        //     if (buttons.length == products.length) {
-        //         cModel.addListeners(buttons);
-        //         clearInterval(prodInterval);
-        //     }
-
-        // }, 200);
-
+        cHandler.showCartQuantity();
+        cHandler.checkEmpty();
 
     });
 });
@@ -76,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
 class ProductService {
 
     // render product by taking data from the products array
-    showProducts(products: ProductStructure[]) {
+    showProducts(products: Product[]) {
 
         var prodWrap = document.getElementById("products-wrapper");
 
@@ -86,14 +73,14 @@ class ProductService {
     }
 
     // Show total products count
-    showCount(products: ProductStructure[]) {
+    showCount(products: Product[]) {
         var prodCount = document.getElementById("total-products");
         prodCount.innerText = (products.length).toString();
     }
 
 }
 
-function createProducts(product: ProductStructure): HTMLDivElement {
+function createProducts(product: Product): HTMLDivElement {
     var root = document.createElement("div")
     root.setAttribute("class", "col-md-3 g-4 product")
 
@@ -154,15 +141,115 @@ function createProducts(product: ProductStructure): HTMLDivElement {
     return root
 }
 
+function createCartItems(cartItem: CartProduct) {
+
+    var cartItemUI = document.getElementsByClassName("cart-item");
+
+    var root = document.createElement("div");
+    root.setAttribute("class", "product cart-item card p-4 mb-3");
+
+    var cardTop = document.createElement("div");
+    cardTop.setAttribute("class", "cart-item-top d-flex alig-items-center flex-wrap justify-content-between")
+
+    var prodInfo = document.createElement("div");
+
+    var title = document.createElement("h5");
+    title.setAttribute("class", "card-title d-inline-block")
+    title.innerText = cartItem.title;
+
+    var price = document.createElement("p");
+    price.setAttribute("class", "product-price");
+    price.innerText = "Price : " + cartItem.price * cartItem.count;
+
+    var count = document.createElement("p");
+    count.setAttribute("class", "item-quantity");
+    count.innerText = "Quantity : " + cartItem.count;
+
+    var cardBottom = document.createElement("div");
+    cardBottom.setAttribute("class", "cart-item-bottom d-flex alig-items-center flex-wrap justify-content-end gap-3")
+
+    // buttons for incrementing, decrementing and removing the products
+
+    var increment = document.createElement("button");
+    increment.setAttribute("class", "incrementItem btn btn-outline-dark flex-fill");
+    increment.innerText = "+";
+    increment.addEventListener('click', () => {
+        cartItem.count++;
+        console.log(cartItem);
+    })
+
+    var decrement = document.createElement("button");
+    decrement.setAttribute("class", "decrementItem btn btn-outline-dark flex-fill");
+    decrement.innerText = "-";
+    decrement.addEventListener('click', () => {
+        cModel.cart.forEach(ci => {
+        });
+        if (cartItem.count > 1) {
+            cartItem.count--;
+        }
+        console.log(cartItem);
+
+        return cartItem.count;
+
+    })
+
+    var remove = document.createElement("button");
+    remove.setAttribute("class", "removeItem btn btn-outline-dark flex-fill");
+    remove.innerText = "Remove";
+    remove.addEventListener('click', () => {
+        for (let i = 0; i < cModel.cart.length; i++) {
+            cartItemUI[i].remove();
+        }
+
+
+        console.log(cModel.cart)
+    });
+
+    prodInfo.appendChild(title);
+    prodInfo.appendChild(price);
+
+    cardTop.appendChild(prodInfo);
+    cardTop.appendChild(count);
+
+    cardBottom.appendChild(increment);
+    cardBottom.appendChild(decrement);
+    cardBottom.appendChild(remove);
+
+    root.appendChild(cardTop);
+    root.appendChild(cardBottom);
+
+    return root;
+}
+
 // 
 class CartModel {
     cart: CartProduct[] = []
 }
 
+
+// middleware class
 class ICartListener implements CartListener {
     OnCartUpdate(cartProducts: CartProduct[]) {
-        console.log(cartProducts)
+        console.log(cartProducts);
         //  Render
+        var cart = document.getElementById('cartBody');
+        var cartItemUI = document.getElementsByClassName('cart-item');
+
+        for (let index = 0; index < cModel.cart.length; index++) {
+            if (!cartItemUI[index]) {
+                cart.appendChild(createCartItems(cModel.cart[index]));
+            }
+            else {
+                console.log("Item already exists");
+            }
+
+        }
+
+
+
+        cModel.cart.forEach(item => {
+
+        });
     }
 }
 
@@ -183,12 +270,8 @@ class CartHandler implements CartActions {
         this._listener = listener
     }
 
-    private cartItems: CartProduct[] = [];
-    get items(): CartProduct[] {
-        return this.cartItems;
-    }
 
-    onclickAddToCart(product: ProductStructure) {
+    onclickAddToCart(product: Product) {
         var cartProduct = new CartProduct(product.id, product.title, product.disc_price, 1)
 
         //  When cart is empty
@@ -213,66 +296,17 @@ class CartHandler implements CartActions {
     }
 
     addToCart(cartProduct: CartProduct): void {
-
-        // check for repeated products
-        // for (let i = 0; i < this.cartItems.length; i++) {
-
-        // getter for added product
-        var addedProduct = document.getElementsByClassName('cart-item');
-
-        /* var cartItemTemplate = `
-        <div class="product cart-item card mb-3">
-            <div class="row g-0 align-items-center">
-                <div class="col-md-4">
-                    <img src="${this.cartItems[i].product.img_url}" class="img-fluid rounded-start" alt="${this.cartItems[i].product.title}">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body p-3">
-                        <h5 class="card-title">${this.cartItems[i].product.title}</h5>
-                        <p class="card-text product-price">
-                            <span>Price :</span>
-                            <span class="original-price text-decoration-line-through text-muted me-2">${this.cartItems[i].product.orig_price} Rs</span>
-                            <span class="discount-price fw-bold">${this.cartItems[i].product.disc_price} Rs</span>
-                        </p>
-                        <p class="item-quantity-wrap">
-                            <span>Quantity :</span>
-                            <span id="item-quantity">${this.cartItems[i].counter}</span>
-                        </p>
-                        <div>
-                            <button class="incrementItem me-2 btn btn-outline-dark"><i class="bi bi-plus-lg"></i></button>
-                            <button class="decrementItem me-2 btn btn-outline-dark"><i class="bi bi-dash-lg"></i></button>
-                            <button class="removeItem btn btn-outline-dark">Remove</button>
-                        </div>
-                    </div>  
-                </div>
-            </div>
-        </div>
-            `; */
-
-
-        var cart = document.getElementById('cartBody');
-
-
-        // cart.insertAdjacentHTML('beforeend', cartItemTemplate);
-
-        // }
-
-
-
-        var itemQuantity = document.getElementById('item-quantity');
-
-        console.log(this.cartItems);
-
-        this.showCartQuantity();
     }
 
     // show number of items on cart button
     showCartQuantity() {
         var qunatityBadge = document.querySelector('.show-cart .cartQuantity') as HTMLElement;
 
-        if (this.cartItems.length > 0) {
+        if (cModel.cart.length > 0) {
+            console.log('Quantity greater than 0');
+
             qunatityBadge.style.display = "block";
-            qunatityBadge.innerHTML = (this.cartItems.length).toString();
+            qunatityBadge.innerText = (cModel.cart.length).toString();
         }
     }
 
@@ -282,13 +316,9 @@ class CartHandler implements CartActions {
 
         emptyMessage.style.display = 'block';
 
-        if (this.cartItems.length != 0) {
+        if (cModel.cart.length != 0) {
             emptyMessage.style.display = 'none';
         }
-    }
-
-    itemQuantity() {
-
     }
 
 }
