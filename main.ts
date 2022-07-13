@@ -175,21 +175,24 @@ function createCartItems(cartItem: CartProduct) {
     increment.innerText = "+";
     increment.addEventListener('click', () => {
         cartItem.count++;
-        console.log(cartItem);
+        console.log(cModel.cart)
     })
 
     var decrement = document.createElement("button");
     decrement.setAttribute("class", "decrementItem btn btn-outline-dark flex-fill");
     decrement.innerText = "-";
     decrement.addEventListener('click', () => {
-        cModel.cart.forEach(ci => {
-        });
+        for (let i = 0; i < cartItemUI.length; i++) {
+            if (cartItem.count == 1) {
+                cartItemUI[i].remove();
+                cModel.cart.splice(i, 1);
+                console.log(cModel.cart)
+                return;
+            }
+        }
         if (cartItem.count > 1) {
             cartItem.count--;
         }
-        console.log(cartItem);
-
-        return cartItem.count;
 
     })
 
@@ -198,11 +201,12 @@ function createCartItems(cartItem: CartProduct) {
     remove.innerText = "Remove";
     remove.addEventListener('click', () => {
         for (let i = 0; i < cModel.cart.length; i++) {
+            cModel.cart.splice(i, 1);
             cartItemUI[i].remove();
+            console.log(cModel.cart)
+            return;
         }
 
-
-        console.log(cModel.cart)
     });
 
     prodInfo.appendChild(title);
@@ -236,20 +240,13 @@ class ICartListener implements CartListener {
         var cartItemUI = document.getElementsByClassName('cart-item');
 
         for (let index = 0; index < cModel.cart.length; index++) {
+
             if (!cartItemUI[index]) {
                 cart.appendChild(createCartItems(cModel.cart[index]));
-            }
-            else {
-                console.log("Item already exists");
             }
 
         }
 
-
-
-        cModel.cart.forEach(item => {
-
-        });
     }
 }
 
