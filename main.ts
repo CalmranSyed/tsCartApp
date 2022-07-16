@@ -237,15 +237,17 @@ class ICartListener implements CartListener {
         console.log(cartProducts);
         //  Render
         var cart = document.getElementById('cartBody');
-        var cartItemUI = document.getElementsByClassName('cart-item');
 
-        for (let index = 0; index < cModel.cart.length; index++) {
+        //  Flush existing cart items
+        var cartItemUI = document.querySelectorAll('.cart-item');
+        cartItemUI.forEach(c => {
+            c.remove()
+        })
 
-            if (!cartItemUI[index]) {
-                cart.appendChild(createCartItems(cModel.cart[index]));
-            }
-
-        }
+        //  Render new Cart Products
+        cModel.cart.map((cartProduct) => {
+            cart.appendChild(createCartItems(cartProduct))
+        })
 
     }
 }
