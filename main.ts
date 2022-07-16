@@ -143,6 +143,8 @@ function createProducts(product: Product): HTMLDivElement {
 
 function createCartItems(cartItem: CartProduct) {
 
+    var cartListener = new ICartListener();
+
     var cartItemUI = document.getElementsByClassName("cart-item");
 
     var root = document.createElement("div");
@@ -175,6 +177,7 @@ function createCartItems(cartItem: CartProduct) {
     increment.innerText = "+";
     increment.addEventListener('click', () => {
         cartItem.count++;
+        cartListener.OnCartUpdate(cModel.cart);
         console.log(cModel.cart)
     })
 
@@ -184,6 +187,7 @@ function createCartItems(cartItem: CartProduct) {
     decrement.addEventListener('click', () => {
         for (let i = 0; i < cartItemUI.length; i++) {
             if (cartItem.count == 1) {
+
                 cartItemUI[i].remove();
                 cModel.cart.splice(i, 1);
                 console.log(cModel.cart)
@@ -191,7 +195,9 @@ function createCartItems(cartItem: CartProduct) {
             }
         }
         if (cartItem.count > 1) {
+
             cartItem.count--;
+            cartListener.OnCartUpdate(cModel.cart);
         }
 
     })
@@ -231,6 +237,10 @@ class CartModel {
 }
 
 
+interface CartListener {
+    OnCartUpdate(cartProducts: CartProduct[]): any
+}
+
 // middleware class
 class ICartListener implements CartListener {
     OnCartUpdate(cartProducts: CartProduct[]) {
@@ -250,10 +260,6 @@ class ICartListener implements CartListener {
         })
 
     }
-}
-
-interface CartListener {
-    OnCartUpdate(cartProducts: CartProduct[]): any
 }
 
 const cModel = new CartModel();
